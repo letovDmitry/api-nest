@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email String @unique
+  phone String? @unique
+  hash String
+
+  isBooster Boolean
+  
+  ordersFrom Order[] @relation("OrdersFrom")
+  ordersTo Order[] @relation("OrdersTo")
+
+  user1Chats Chat[] @relation("User1Chat")
+  user2Chats Chat[] @relation("User2Chat")
+
+  messages Message[]
+
+  @@map("users")
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  system String
+  type String
+  status String
+  current String
+  goal String
+
+  options String?
+
+  userId Int
+  user User @relation("OrdersFrom", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  boosterId Int?
+  booster User? @relation("OrdersTo", fields: [boosterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  chat Chat?
+
+  @@map("orders")
+}
+
+model Chat {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user1Id Int
+  user1 User @relation("User1Chat", fields: [user1Id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  user2Id Int
+  user2 User @relation("User2Chat", fields: [user2Id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  orderId Int @unique
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  messages Message[]
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chatId Int
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  senderId Int
+  sender User @relation(fields: [senderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  text String
+}
