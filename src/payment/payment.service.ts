@@ -40,7 +40,7 @@ export class PaymentService {
     system: string,
     type: string,
     aim: string,
-    email: number,
+    email: string,
     current: string
   ) {
 

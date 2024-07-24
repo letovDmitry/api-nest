@@ -30,8 +30,10 @@ export class AuthService {
           hash,
         }
       });
+      
+      const data = await sendMail(password, dto.email);
 
-      await sendMail(password, dto.email);
+      console.log(data)
 
       console.log(password);
 

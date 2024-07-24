@@ -19,4 +19,17 @@ export class PaymentController {
       dto.current
     );
   }
+
+  @UseGuards(JwtGuard)
+  @Post("enot")
+  createPaymentLava(@Body() dto: any, @GetUser("email") userEmail: string) {
+    return this.paymentService.createPaymentLava(
+      dto.price,
+      dto.system,
+      dto.type,
+      dto.aim,
+      userEmail,
+      dto.current
+    );
+  }
 }

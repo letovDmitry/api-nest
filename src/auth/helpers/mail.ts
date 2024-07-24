@@ -2,8 +2,8 @@ import * as nodemailer from "nodemailer";
 var Mailgen = require("mailgen");
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 485,
+  host: "smtp.yandex.ru",
+  port: 465,
   secure: true,
   auth: {
     user: process.env.MAIL_USER,
@@ -12,8 +12,14 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendMail = async (pass: string, email: string) => {
+  console.log({
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },)
   const config = {
-    service: "gmail",
+    host: "smtp.yandex.ru",
+    port: 465,
+    secure: true,
     auth: {
       user: process.env.MAIL_USER,
       pass: process.env.MAIL_PASS,
@@ -42,7 +48,7 @@ export const sendMail = async (pass: string, email: string) => {
   const mail = mailGenerator.generate(response);
 
   const message = {
-    from: "vaspupkin976@gmail.com",
+    from: "info@anyboost.net",
     to: email,
     subject: "Registration",
     html: mail,
@@ -50,7 +56,7 @@ export const sendMail = async (pass: string, email: string) => {
 
   const res = await transporter
     .sendMail(message)
-    .catch((e) => console.error(e));
+    .catch((e) => console.error('mail error', e));
 
   return res;
 };
