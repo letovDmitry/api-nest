@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendMail = async (pass: string, email: string) => {
+export const sendMail = async (pass: string, email: string, type: "recover" | "signup") => {
   console.log({
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS,
@@ -57,7 +57,7 @@ export const sendMail = async (pass: string, email: string) => {
   const message = {
     from: "info@anyboost.net",
     to: email,
-    subject: "Регистрация",
+    subject: type === 'recover' ? "Восстановление пароля" : "Регистрация",
     html: mail,
   };
 

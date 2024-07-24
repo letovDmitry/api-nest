@@ -31,7 +31,7 @@ export class AuthService {
         }
       });
       
-      const data = await sendMail(password, dto.email);
+      const data = await sendMail(password, dto.email, 'recover');
 
       console.log(data)
 
@@ -56,7 +56,7 @@ export class AuthService {
         },
       });
 
-      await sendMail(password, dto.email);
+      await sendMail(password, dto.email, "recover");
 
       console.log(password);
 
