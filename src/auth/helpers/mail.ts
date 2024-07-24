@@ -38,11 +38,18 @@ export const sendMail = async (pass: string, email: string) => {
 
   const response = {
     body: {
+      title: 'Привет,'  + email,
       name: email,
-      intro: "Your password is " + pass,
+      intro: "Твой пароль для входа в личный кабинет: " + pass,
+      action: {
+        button: {
+            color: '#4971ff', 
+            text: 'Войти в кабинет',
+            link: 'https://anyboost.ru/login'
+        }
     },
-    outro:
-      "If you did not request a password, no further action is required on your part.",
+    signature: 'С уважением команда',
+    },
   };
 
   const mail = mailGenerator.generate(response);
@@ -50,13 +57,13 @@ export const sendMail = async (pass: string, email: string) => {
   const message = {
     from: "info@anyboost.net",
     to: email,
-    subject: "Registration",
+    subject: "Регистрация",
     html: mail,
   };
 
   const res = await transporter
     .sendMail(message)
-    .catch((e) => console.error('mail error', e));
+    .catch((e) => console.error(e));
 
   return res;
 };
