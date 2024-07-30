@@ -20,6 +20,8 @@ model User {
   hash String
 
   isBooster Boolean
+  isAdmin Boolean @default(false)
+  isApproved Boolean 
   
   ordersFrom Order[] @relation("OrdersFrom")
   ordersTo Order[] @relation("OrdersTo")
@@ -85,4 +87,5 @@ model Message {
   sender User @relation(fields: [senderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   text String
+  seen Boolean @default(false)
 }

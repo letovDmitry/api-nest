@@ -52,11 +52,13 @@ export class AuthService {
         data: {
           email: dto.email,
           isBooster: dto.isBooster,
+          // isApproved: dto.isBooster ? true : true,
+          isApproved: dto.isBooster ? false : true,
           hash,
         },
       });
 
-      await sendMail(password, dto.email, "recover");
+      await sendMail(password, dto.email, "signup");
 
       console.log(password);
 
@@ -81,6 +83,56 @@ export class AuthService {
     const pwMatches = await argon.verify(user.hash, dto.password);
 
     if (!pwMatches) throw new ForbiddenException("Credentials incorrect");
+
+    if (!user.isApproved) throw new ForbiddenException("Not approved");
+
+    return this.signToken(user.id, user.email, user.isBooster);
+  }
+
+  async signupAdmin(dto: AuthDto) {
+    const password = generatePassword();
+    const hash = await argon.hash(password);
+
+    try {
+      const user = await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          isBooster: false,
+          isApproved: true,
+          hash,
+          isAdmin: true,
+        },
+      });
+
+      await sendMail(password, dto.email, "signup");
+
+      console.log(password);
+
+      return this.signToken(user.id, user.email, user.isBooster);
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        if (e.code === "P2002")
+          throw new ForbiddenException("Credentials taken");
+      }
+    }
+  }
+
+  async signinAdmin(dto: AuthDto) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
+
+    if (!user) throw new ForbiddenException("Credentials incorrect");
+    
+    if (!user.isAdmin) throw new ForbiddenException("Credentials incorrect");
+
+    const pwMatches = await argon.verify(user.hash, dto.password);
+
+    if (!pwMatches) throw new ForbiddenException("Credentials incorrect");
+
+    if (!user.isApproved) throw new ForbiddenException("Not approved");
 
     return this.signToken(user.id, user.email, user.isBooster);
   }

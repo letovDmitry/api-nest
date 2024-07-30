@@ -16,6 +16,14 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @UseGuards(JwtGuard)
+  @Get("/unseen")
+  getUnseenMessages(
+    @GetUser("id") userId: number
+  ) {
+    return this.chatService.getUnseenMessagesAndChats(userId);
+  }
+
+  @UseGuards(JwtGuard)
   @Get("/:id")
   getMessagesByOrderId(
     @Param("id", ParseIntPipe) orderId: number,

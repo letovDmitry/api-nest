@@ -12,6 +12,11 @@ export class AuthController {
     return this.authService.signup(dto);
   }
 
+  @Post("signupAdmin")
+  signupAdmin(@Body() dto: AuthDto) {
+    return this.authService.signupAdmin(dto);
+  }
+
   @Post("recover")
   recoverPassword(@Body() dto: AuthDto) {
     return this.authService.recoverPassword(dto);
@@ -21,5 +26,11 @@ export class AuthController {
   @Post("signin")
   signin(@Body() dto: AuthDto) {
     return this.authService.signin(dto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post("signinAdmin")
+  signinAdmin(@Body() dto: AuthDto) {
+    return this.authService.signinAdmin(dto);
   }
 }

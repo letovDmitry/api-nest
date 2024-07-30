@@ -5,6 +5,31 @@ import { PrismaService } from "src/prisma/prisma.service";
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
+  async getUnseenMessagesAndChats(userId: number) {
+    const orders = await this.prisma.order.findMany({
+      where: {
+        OR: [
+          { userId },
+          { boosterId: userId }
+        ]
+      },
+      include: {
+        chat: {
+          include: {
+            messages: true
+          }
+        },
+      },
+    });
+
+    const unseenMessagesByOrder = orders.map(o => ({
+      id: o.id,
+      unseen: o?.chat?.messages?.filter(m => !m.seen && m.senderId !== userId).length
+    }));
+
+    return unseenMessagesByOrder
+  }
+
   async getMessagesByOrderId(orderId: number, userId: number) {
     const chat = await this.prisma.chat.findUnique({
       where: {
@@ -16,6 +41,18 @@ export class ChatService {
     });
 
     if (chat.user1Id === userId || chat.user2Id === userId) {
+      await this.prisma.message.updateMany({
+        where: {
+          chatId: chat.id,
+          seen: false,
+          NOT: {
+            senderId: userId
+          }
+        },
+        data: {
+          seen: true
+        }
+      })
       return chat.messages;
     }
   }
@@ -34,6 +71,9 @@ export class ChatService {
           text,
           senderId: userId,
         },
+        include: {
+          chat: true
+        }
       });
     }
   }

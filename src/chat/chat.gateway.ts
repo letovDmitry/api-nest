@@ -30,5 +30,6 @@ export class ChatGateway {
     );
 
     client.to(payload.orderId).emit("message", newMessage);
+    this.server.emit("newMessage", newMessage);
   }
 }
