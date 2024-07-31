@@ -16,7 +16,7 @@ export class PaymentService {
     async payment(dto: PaymentDto) {
         const payment = await yooKassa.createPayment({
             amount: {
-              value: dto.amount.toFixed(2),
+              value: dto.amount,
               currency: "RUB"
             },
             payment_method_data: {
