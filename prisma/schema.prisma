@@ -26,6 +26,8 @@ model User {
   ordersFrom Order[] @relation("OrdersFrom")
   ordersTo Order[] @relation("OrdersTo")
 
+  seenOrders Order[] 
+
   user1Chats Chat[] @relation("User1Chat")
   user2Chats Chat[] @relation("User2Chat")
 
@@ -54,6 +56,10 @@ model Order {
   booster User? @relation("OrdersTo", fields: [boosterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   chat Chat?
+
+  seenBy User[]
+
+  number Int @default(2)
 
   @@map("orders")
 }

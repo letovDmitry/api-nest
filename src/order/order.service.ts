@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { OrderGateway } from "./order.gateway";
 import { PaymentService } from "src/payment/payment.service";
+import { Order } from "@prisma/client";
 
 @Injectable()
 export class OrderService {
@@ -15,7 +16,7 @@ export class OrderService {
           current: dto.custom_fields.current,
           type: dto.custom_fields.type,
           options: dto.custom_fields.options,
-          status: "В ожидании оплаты",
+          status: "Поиск бустера",
           user: {
             connect: {
               email: dto.custom_fields.email,
@@ -24,14 +25,14 @@ export class OrderService {
         },
       });
 
-      const payment = await this.paymentService.payment({ amount: dto.custom_fields.price, orderId: order.id })
+      // const payment = await this.paymentService.payment({ amount: dto.custom_fields.price, orderId: order.id })
 
       this.ordersGateway.handleEmitNotification()
 
       return order;
   }
 
-  async getNewOrdersForBooster() {
+  async getNewOrdersForBooster(userId: number) {
     const orders = await this.prisma.order.findMany({
       where: {
         status: "Поиск бустера",
@@ -39,9 +40,27 @@ export class OrderService {
       orderBy: {
         id: "asc",
       },
+      include: {
+        seenBy: true
+      }
     });
 
-    return orders;
+    orders.forEach(async o => {
+      await this.prisma.order.update({
+        where: {
+          id: o.id
+        },
+        data: {
+          seenBy: {
+            connect: {
+              id: userId
+            }
+          }
+        }
+      })
+    })
+
+    return orders
   }
 
   async takeOrderForBooster(orderId: number, userId: number) {

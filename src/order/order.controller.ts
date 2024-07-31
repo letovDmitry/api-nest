@@ -22,9 +22,10 @@ export class OrderController {
     return this.orderService.getOrdersForMember(userId);
   }
 
+  @UseGuards(JwtGuard)
   @Get("booster_new")
-  getNewOrdersForBooster() {
-    return this.orderService.getNewOrdersForBooster();
+  getNewOrdersForBooster(@GetUser("id") userId: number) {
+    return this.orderService.getNewOrdersForBooster(userId);
   }
 
   @UseGuards(JwtGuard)
