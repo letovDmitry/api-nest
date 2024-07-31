@@ -33,6 +33,7 @@ export class PaymentService {
     }
 
     async getPaymentStatus(dto: PaymentStatusDto) {
+        console.log(dto)
         if (dto.event !== 'payment.waiting_for_capture') return
 
         console.log(dto)
