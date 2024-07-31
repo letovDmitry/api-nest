@@ -24,7 +24,7 @@ export class PaymentService {
             },
             confirmation: {
               type: "redirect",
-              return_url: "https://www.merchant-website.com/return_url"
+              return_url: "https://anyboost.ru/payment-success"
             },
             description: `${dto.orderId}`
         });
@@ -44,18 +44,18 @@ export class PaymentService {
         
         console.log(payment.description)
 
-        // const paymentId: number = parseInt(payment.id)
+        const orderId: number = parseInt(payment.description)
 
-        // const order = await this.prisma.order.update({
-        //     where: {
-        //         id: paymentId
-        //     },
-        //     data: {
-        //         status: 'Оплачено'
-        //     }
-        // })
+        const order = await this.prisma.order.update({
+            where: {
+                id: orderId
+            },
+            data: {
+                status: 'Поиск бустера'
+            }
+        })
 
-        // console.log(order)
+        console.log(order)
     }
 
 }
