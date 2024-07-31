@@ -16,7 +16,7 @@ export class OrderService {
           current: dto.custom_fields.current,
           type: dto.custom_fields.type,
           options: dto.custom_fields.options,
-          status: "Поиск бустера",
+          status: "Ожидание оплаты",
           user: {
             connect: {
               email: dto.custom_fields.email,
@@ -25,11 +25,11 @@ export class OrderService {
         },
       });
 
-      // const payment = await this.paymentService.payment({ amount: dto.custom_fields.price, orderId: order.id })
+      const payment = await this.paymentService.payment({ amount: dto.custom_fields.price, orderId: order.id })
 
       this.ordersGateway.handleEmitNotification()
 
-      return order;
+      return payment.confirmation;
   }
 
   async getNewOrdersForBooster(userId: number) {

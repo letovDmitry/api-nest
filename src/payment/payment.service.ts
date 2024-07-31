@@ -33,10 +33,10 @@ export class PaymentService {
     }
 
     async getPaymentStatus(dto: PaymentStatusDto) {
-        console.log(dto)
+        // console.log(dto)
         if (dto.event !== 'payment.waiting_for_capture') return
 
-        console.log(dto)
+        // console.log(dto)
 
         const payment = await yooKassa.capturePayment(
             dto.object.id,
