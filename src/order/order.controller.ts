@@ -34,9 +34,14 @@ export class OrderController {
     return this.orderService.getOrdersForBooster(userId);
   }
 
-  @Post()
-  createOrder(@Body() dto: any) {
-    return this.orderService.createOrder(dto);
+  @Post('yookassa')
+  createOrderYookassa(@Body() dto: any) {
+    return this.orderService.createOrderYookassa(dto);
+  }
+
+  @Post('enot')
+  createOrderEnot(@Body() dto: any) {
+    return this.orderService.createOrderEnot(dto);
   }
 
   @UseGuards(JwtGuard)

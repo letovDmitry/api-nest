@@ -3,6 +3,7 @@ import { OrderService } from 'src/order/order.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as Yookassa from 'yookassa'
 import { PaymentDto, PaymentStatusDto } from './dto';
+import axios from 'axios';
 
 const yooKassa = new Yookassa({
     shopId: process.env.SHOP_ID,
@@ -50,6 +51,44 @@ export class PaymentService {
         const order = await this.prisma.order.update({
             where: {
                 id: orderId
+            },
+            data: {
+                status: 'Поиск бустера'
+            }
+        })
+
+        console.log(order)
+    }
+
+    async createPaymentEnot(
+        amount: number,
+        orderId: string
+    ) {
+        const data = await axios.post(
+        "https://api.enot.io/invoice/create",
+        {
+            amount,
+            order_id: orderId,
+            currency: "RUB",
+            shop_id: process.env.ENOT_SHOP_ID,
+        },
+        {
+            headers: {
+                "x-api-key": process.env.X_API_KEY,
+            },
+        }
+        );
+
+        return { url: data.data.data.url };
+    }
+
+    async getPaymentStatusEnot(dto: any) {
+        console.log(dto)
+        if (dto.status !== 'success') return
+
+        const order = await this.prisma.order.update({
+            where: {
+                id: parseInt(dto.order_id)
             },
             data: {
                 status: 'Поиск бустера'
