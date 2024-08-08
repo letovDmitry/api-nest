@@ -29,7 +29,7 @@ export class OrderService {
 
     this.ordersGateway.handleEmitNotification()
 
-    return `${payment}`.replace(/<[^>]+>/g, '');
+    return `${payment}`;
 }
 
   async createOrderYookassa(dto: any) {
