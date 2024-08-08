@@ -157,7 +157,7 @@ export class OrderService {
       where: {
         boosterId: userId,
         NOT: {
-          status: "В ожидании оплаты"
+          status: "Ожидание оплаты"
         }
       },
       orderBy: {
@@ -177,7 +177,7 @@ export class OrderService {
       where: {
         userId,
         NOT: {
-          status: "В ожидании оплаты"
+          status: "Ожидание оплаты"
         }
       },
       orderBy: {
