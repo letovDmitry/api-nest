@@ -23,6 +23,11 @@ export class PaymentController {
   getPaymentStatusEnot(@Body() dto) {
     return this.paymentService.getPaymentStatusEnot(dto)
   }
+
+  @Post('status/selfwork')
+  getPaymentStatusSelfwork(@Body() dto) {
+    return this.paymentService.getPaymentStatusSelfwork(dto)
+  }
 }
 
 // import { Body, Controller, Post, UseGuards } from "@nestjs/common";

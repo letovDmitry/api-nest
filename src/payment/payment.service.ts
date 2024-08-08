@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as Yookassa from 'yookassa'
 import { PaymentDto, PaymentStatusDto } from './dto';
 import axios from 'axios';
+import { createHash } from 'crypto';
 
 const yooKassa = new Yookassa({
     shopId: process.env.SHOP_ID,
@@ -65,7 +66,7 @@ export class PaymentService {
         orderId: string
     ) {
         const data = await axios.post(
-        "https://api.enot.io/invoice/create",
+        "https://api.morune.com/invoice/create",
         {
             amount,
             order_id: orderId,
@@ -85,6 +86,49 @@ export class PaymentService {
     async getPaymentStatusEnot(dto: any) {
         console.log(dto)
         if (dto.status !== 'success') return
+
+        const order = await this.prisma.order.update({
+            where: {
+                id: parseInt(dto.order_id)
+            },
+            data: {
+                status: 'Поиск бустера'
+            }
+        })
+
+        console.log(order)
+    }
+
+    async createPaymentSelfwork(
+        amount: number,
+        orderId: string
+    ) {
+        const body: { order_id: string, amount: string, info: Array< { name: string, quantity: number, amount: number } >, signature?: string } = {
+            order_id: orderId,
+            amount: (amount*100).toString(),
+            info: [{
+                name: 'Буст',
+                quantity: 1,
+                amount: amount*100
+            }]
+        }
+
+        const apiKey = process.env.SELFWORK_API_KEY
+
+        const signature = createHash('sha256').update(body.order_id + body.amount + body.info[0].name + body.info[0].quantity + + body.info[0].amount + apiKey).digest('hex');
+
+        body.signature = signature
+
+        const data = await axios.post(
+        "https://pro.selfwork.ru/merchant/v1/init", body);
+
+        // return { url: data.data.data.url };
+        console.log(data.data)
+    }
+
+    async getPaymentStatusSelfwork(dto: any) {
+        console.log(dto)
+        if (dto.status !== 'succeeded') return
 
         const order = await this.prisma.order.update({
             where: {

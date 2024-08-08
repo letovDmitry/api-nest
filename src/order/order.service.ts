@@ -8,6 +8,30 @@ import { Order } from "@prisma/client";
 export class OrderService {
   constructor(private prisma: PrismaService, private ordersGateway: OrderGateway, private paymentService: PaymentService) {}
 
+  async createOrderSelfwork(dto: any) {
+    const order = await this.prisma.order.create({
+      data: {
+        system: dto.custom_fields.system,
+        goal: dto.custom_fields.goal,
+        current: dto.custom_fields.current,
+        type: dto.custom_fields.type,
+        options: dto.custom_fields.options,
+        status: "Ожидание оплаты",
+        user: {
+          connect: {
+            email: dto.custom_fields.email,
+          },
+        },
+      },
+    });
+
+    const payment = await this.paymentService.createPaymentSelfwork( dto.custom_fields.price, order.id.toString() )
+
+    this.ordersGateway.handleEmitNotification()
+
+    return payment;
+}
+
   async createOrderYookassa(dto: any) {
       const order = await this.prisma.order.create({
         data: {
