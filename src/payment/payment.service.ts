@@ -126,8 +126,8 @@ export class PaymentService {
             "Referer": "anyboost.ru"
         } });
 
-        // return { url: data.data.data.url };
-        console.log(data)
+        console.log(data.data)
+        return data.data;
     }
 
     async getPaymentStatusSelfwork(dto: any) {
