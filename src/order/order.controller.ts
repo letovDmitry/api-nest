@@ -44,6 +44,11 @@ export class OrderController {
     return this.orderService.createOrderEnot(dto);
   }
 
+  @Post('selfwork')
+  createOrderSelfwork(@Body() dto: any) {
+    return this.orderService.createOrderSelfwork(dto);
+  }
+
   @UseGuards(JwtGuard)
   @Put("complete/:id")
   completeOrderForBooster(@Param("id", ParseIntPipe) orderId: number) {
