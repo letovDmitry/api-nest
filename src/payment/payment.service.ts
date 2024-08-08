@@ -123,7 +123,7 @@ export class PaymentService {
         "https://pro.selfwork.ru/merchant/v1/init", body);
 
         // return { url: data.data.data.url };
-        console.log(data.data)
+        console.log(data)
     }
 
     async getPaymentStatusSelfwork(dto: any) {
