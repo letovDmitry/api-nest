@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { OrderService } from "./order.service";
@@ -44,8 +45,9 @@ export class OrderController {
     return this.orderService.createOrderEnot(dto);
   }
 
-  @Post('selfwork')
-  createOrderSelfwork(@Body() dto: any) {
+  @Get('selfwork')
+  createOrderSelfwork(@Query() query) {
+    const dto = { custom_fields: query }
     return this.orderService.createOrderSelfwork(dto);
   }
 

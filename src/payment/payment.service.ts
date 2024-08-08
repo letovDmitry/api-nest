@@ -100,16 +100,16 @@ export class PaymentService {
     }
 
     async createPaymentSelfwork(
-        amount: number,
+        amount: string,
         orderId: string
     ) {
         const body: { order_id: string, amount: string, info: Array< { name: string, quantity: number, amount: number } >, signature?: string } = {
             order_id: orderId,
-            amount: (amount*100).toString(),
+            amount: (parseInt(amount)*100).toString(),
             info: [{
                 name: 'Буст',
                 quantity: 1,
-                amount: amount*100
+                amount: parseInt(amount)*100
             }]
         }
 
