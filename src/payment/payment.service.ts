@@ -127,7 +127,7 @@ export class PaymentService {
         } });
 
         console.log(data.data)
-        return data.data;
+        return data;
     }
 
     async getPaymentStatusSelfwork(dto: any) {
