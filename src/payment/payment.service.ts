@@ -120,7 +120,11 @@ export class PaymentService {
         body.signature = signature
 
         const data = await axios.post(
-        "https://pro.selfwork.ru/merchant/v1/init", body);
+        "https://pro.selfwork.ru/merchant/v1/init", body, { headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            "Origin": "https://anyboost.ru/",
+            "Referer": "anyboost.ru"
+        } });
 
         // return { url: data.data.data.url };
         console.log(data)
