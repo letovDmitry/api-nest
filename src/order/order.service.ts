@@ -9,6 +9,7 @@ export class OrderService {
   constructor(private prisma: PrismaService, private ordersGateway: OrderGateway, private paymentService: PaymentService) {}
 
   async createOrderSelfwork(dto: any) {
+    console.log(dto)
     const order = await this.prisma.order.create({
       data: {
         system: dto.custom_fields.system,
