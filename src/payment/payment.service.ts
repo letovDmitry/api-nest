@@ -5,6 +5,7 @@ import * as Yookassa from 'yookassa'
 import { PaymentDto, PaymentStatusDto } from './dto';
 import axios from 'axios';
 import { createHash } from 'crypto';
+import { OrderGateway } from 'src/order/order.gateway';
 
 const yooKassa = new Yookassa({
     shopId: process.env.SHOP_ID,
@@ -13,7 +14,7 @@ const yooKassa = new Yookassa({
 
 @Injectable()
 export class PaymentService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService, private ordersGateway: OrderGateway) {}
     
     async payment(dto: PaymentDto) {
         const payment = await yooKassa.createPayment({
@@ -58,6 +59,8 @@ export class PaymentService {
             }
         })
 
+        this.ordersGateway.handleEmitNotification()
+
         console.log(order)
     }
 
@@ -95,6 +98,8 @@ export class PaymentService {
                 status: 'Поиск бустера'
             }
         })
+
+        this.ordersGateway.handleEmitNotification()
 
         console.log(order)
     }
@@ -142,6 +147,8 @@ export class PaymentService {
                 status: 'Поиск бустера'
             }
         })
+
+        this.ordersGateway.handleEmitNotification()
 
         console.log(order)
     }

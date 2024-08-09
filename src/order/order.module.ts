@@ -8,6 +8,6 @@ import { PaymentModule } from 'src/payment/payment.module';
   controllers: [OrderController],
   providers: [OrderService, OrderGateway],
   imports: [forwardRef(() => PaymentModule)],
-  exports: [OrderService]
+  exports: [OrderService, OrderGateway]
 })
 export class OrderModule {}

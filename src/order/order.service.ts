@@ -1,12 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { OrderGateway } from "./order.gateway";
 import { PaymentService } from "src/payment/payment.service";
-import { Order } from "@prisma/client";
 
 @Injectable()
 export class OrderService {
-  constructor(private prisma: PrismaService, private ordersGateway: OrderGateway, private paymentService: PaymentService) {}
+  constructor(private prisma: PrismaService, private paymentService: PaymentService) {}
 
   async createOrderSelfwork(dto: any) {
     console.log(dto)
@@ -27,8 +25,6 @@ export class OrderService {
     });
 
     const payment = await this.paymentService.createPaymentSelfwork( dto.custom_fields.price, order.id.toString() )
-
-    this.ordersGateway.handleEmitNotification()
 
     return payment;
 }
@@ -52,8 +48,6 @@ export class OrderService {
 
       const payment = await this.paymentService.payment({ amount: dto.custom_fields.price, orderId: order.id })
 
-      this.ordersGateway.handleEmitNotification()
-
       return payment.confirmation;
   }
 
@@ -75,8 +69,6 @@ export class OrderService {
     });
 
     const payment = await this.paymentService.createPaymentEnot(dto.custom_fields.price, order.id.toString() )
-
-    this.ordersGateway.handleEmitNotification()
 
     return payment;
 }
