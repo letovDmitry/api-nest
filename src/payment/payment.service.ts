@@ -139,18 +139,26 @@ export class PaymentService {
         console.log(dto)
         if (dto.status !== 'succeeded') return
 
-        const order = await this.prisma.order.update({
+        const order = await this.prisma.order.findUnique({
             where: {
                 id: parseInt(dto.order_id)
             },
-            data: {
-                status: 'Поиск бустера'
-            }
         })
 
-        this.ordersGateway.handleEmitNotification()
+        if (order.status === 'Ожидание оплаты') {
+            await this.prisma.order.update({
+                where: {
+                    id: parseInt(dto.order_id)
+                },
+                data: {
+                    status: 'Поиск бустера'
+                }
+            })
 
-        console.log(order)
+            this.ordersGateway.handleEmitNotification()
+
+            console.log(order)
+        }
     }
 
 }
