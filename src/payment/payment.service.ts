@@ -108,6 +108,7 @@ export class PaymentService {
         amount: string,
         orderId: string
     ) {
+        console.log('orderid', orderId)
         const body: { order_id: string, amount: string, info: Array< { name: string, quantity: number, amount: number } >, signature?: string } = {
             order_id: orderId,
             amount: (parseInt(amount)*100).toString(),
@@ -124,6 +125,8 @@ export class PaymentService {
 
         body.signature = signature
 
+        console.log('body', body)
+
         const data = await axios.post(
         "https://pro.selfwork.ru/merchant/v1/init", body, { headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -136,14 +139,16 @@ export class PaymentService {
     }
 
     async getPaymentStatusSelfwork(dto: any) {
-        console.log(dto)
         if (dto.status !== 'succeeded') return
+        console.log(dto)
 
         const order = await this.prisma.order.findUnique({
             where: {
                 id: parseInt(dto.order_id)
             },
         })
+
+        console.log(order)
 
         if (order.status === 'Ожидание оплаты') {
             await this.prisma.order.update({
